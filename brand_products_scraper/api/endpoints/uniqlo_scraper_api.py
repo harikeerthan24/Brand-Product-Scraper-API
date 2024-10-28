@@ -20,7 +20,7 @@ class UniqloConfig(BaseModel):
     """
     base_url: str = "https://www.uniqlo.com/us/api/commerce/v5/en/recommendations/products"
     item_id: str = "E469410-000"
-    max_limit: int = 1000
+    max_limit: int = 500
     custom_headers: dict = {
         'accept': '*/*',
         'accept-language': 'en-US,en;q=0.9',
