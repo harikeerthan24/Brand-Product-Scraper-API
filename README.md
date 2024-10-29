@@ -52,7 +52,11 @@ A comprehensive API for scraping product information from major fashion brands. 
    ```
 
    Server will run at: `http://127.0.0.1:8000`
-   API Documentation: `http://127.0.0.1:8000/docs`
+
+   API Documentation :
+    Swagger UI: `http://127.0.0.1:8000/docs`
+    
+
 
 
 Check out Product API :
