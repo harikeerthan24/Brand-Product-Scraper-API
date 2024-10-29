@@ -105,6 +105,6 @@ Follow these steps to run the `main.py` file for your FastAPI project, access th
    - In your browser, go to `http://127.0.0.1:8000` to see the running server.
    - To access the Swagger UI documentation, go to `http://127.0.0.1:8000/docs`.
 
-   ![FastAPI Server Screenshot](images/FastAPI_Server.jpg)
+   ![FastAPI Server Screenshot](./brand_products_scraper/images/FastAPI_Server.jpg)
 
 You can now interact with the API and test the available endpoints using the Swagger UI.
