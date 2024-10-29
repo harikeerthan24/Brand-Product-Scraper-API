@@ -1,19 +1,5 @@
 #File: hm_scraper_api.py
 
-"""
-H&M Scraper API
-
-This module provides an API for scraping product data from the H&M website. It uses FastAPI to expose endpoints
-that allow users to scrape product categories, configure request parameters, and retrieve product information.
-
-Endpoints:
-    - /scrape/hm: Scrapes product data for specified categories and returns the results in JSON format.
-
-Configuration:
-    - HMScraperConfig: Contains the default parameters for scraping the H&M website.
-"""
-
-
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel # data validation 
 from fastapi.responses import JSONResponse
@@ -26,16 +12,7 @@ router = APIRouter()
 
 # configuration model 
 class HMScraperConfig(BaseModel):
-    """
-    Configuration model for H&M scraper API.
-
-    Attributes:
-        base_url (str): The base URL of the H&M product API.
-        page_size (int): The number of products to fetch per page.
-        max_pages (int): The maximum number of pages to scrape.
-        category_page_ids (List[str]): List of category page IDs to scrape.
-        custom_headers (dict): Headers to be sent with each HTTP request.
-    """
+    
     base_url: str = "https://api.hm.com/search-services/v1/en_US/listing/resultpage"
     page_size: int = 20 # no of products we need 
     max_pages: int = 1  # total no pages 
@@ -131,8 +108,6 @@ async def scrape_hm(
         product_types (List[str]): Specific product types to scrape.
         page_size (int): Number of products per page.
         max_pages (Optional[int]): Maximum number of pages to scrape.
-        output_dir (Optional[str]): Directory to save output files (optional).
-        limit (int): Maximum number of products to return (default: 100, max: 1000).
 
     Returns:
         JSONResponse: Contains a message, a list of scraped products, and optional file paths to saved JSON files.
