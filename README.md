@@ -29,9 +29,6 @@ Brand-Product-Scraper-API/
     │   zara_scraper_api.py        # API endpoints for scraping Zara products (coming soon)
     │   __init__.py                # Initializes the endpoints package
 ```
-```
-
-This structure provides a clear overview of the organization and functionality of the project files.
 
 
 ### Cloning the Repository
