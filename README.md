@@ -10,6 +10,31 @@ A comprehensive API for scraping product information from major fashion brands. 
 - Uniqlo
 - Zara (Coming Soon)
 
+
+```markdown
+## Project File Structure
+
+The following is the file structure for the Brand Product Scraper API project:
+
+```
+Brand-Product-Scraper-API/
+│   main.py                  # Entry point for the FastAPI application
+│   models.py                # Contains Pydantic models for data validation and serialization
+│   __init__.py              # Initializes the API package
+│
+└───endpoints                # Directory containing API endpoint implementations
+    │   burberry_scraper_api.py   # API endpoints for scraping Burberry products
+    │   hm_scraper_api.py          # API endpoints for scraping H&M products
+    │   kate_spade_api.py          # API endpoints for scraping Kate Spade products
+    │   uniqlo_scraper_api.py      # API endpoints for fetching Uniqlo product recommendations
+    │   zara_scraper_api.py        # API endpoints for scraping Zara products (coming soon)
+    │   __init__.py                # Initializes the endpoints package
+```
+```
+
+This structure provides a clear overview of the organization and functionality of the project files.
+
+
 ### Cloning the Repository
 
 **Clone the Repository**  
