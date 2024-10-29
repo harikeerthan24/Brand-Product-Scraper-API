@@ -26,6 +26,10 @@ brand_products_scraper/
         └── __init__.py              # Marks the endpoints directory as a Python package for imports
 ```
 
+### Note 
+
+Currently zara scraper api is in development so it wont work.
+
 ## Setting Up a Virtual Environment
 
 To manage dependencies effectively, it's recommended to set up a virtual environment using either `venv` (built-in with Python) or `conda` (via Anaconda or Miniconda).
