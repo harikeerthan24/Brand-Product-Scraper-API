@@ -10,7 +10,13 @@ A comprehensive API for scraping product information from major fashion brands. 
 - Uniqlo
 - Zara (Coming Soon)
 
-## Getting Started
+### Cloning the Repository
+
+**Clone the Repository**  
+   To clone the repository, run the following command in your terminal or command prompt:
+   ```bash
+   git clone https://github.com/harikeerthan24/Brand-Product-Scraper-API.git
+
 
 ### Installation
 
