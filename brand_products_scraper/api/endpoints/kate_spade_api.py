@@ -100,7 +100,7 @@ async def fetch_products(config: KateSpadeConfig, category: str, page: int) -> L
         print(f"Unexpected error: {str(e)}")
         return []
 
-@router.post("/scrape/katespade")
+@router.post("/scrape/katespade" , description= "")
 async def scrape_kate_spade(
     categories: List[KateSpadeCategory] = Query(..., description="Categories to scrape (comma-separated)"),
     pages: Optional[int] = Query(5, ge=1, le=5, description="Number of pages to scrape (max 5)")

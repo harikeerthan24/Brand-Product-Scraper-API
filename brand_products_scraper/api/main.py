@@ -11,12 +11,16 @@ from endpoints.burberry_scraper_api import router as burberry_router
 from endpoints.kate_spade_api import router as kate_spade_router
 from endpoints.uniqlo_scraper_api import router as uniqlo_router
 
-app = FastAPI()
+app = FastAPI(
+    title="Brand Products Scraper API",
+    description="API for scraping product data from different brands",
+)
+
 
 app.include_router(hm_router,tags=["H&M"]) # HM 
 app.include_router(burberry_router,tags=["Burberry"]) # Burberry
 # app.include_router(zara_router, tags=["Zara"])  # Zara 
-app.include_router(kate_spade_router , tags=["Kate_Spade"]) # Kate_Spade
+app.include_router(kate_spade_router , tags=["Kate Spade"]) # Kate_Spade
 app.include_router(uniqlo_router, tags=["Uniqlo"]) # Uniqlo
 
 

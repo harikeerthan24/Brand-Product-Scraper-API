@@ -1,10 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 import httpx
 import json
-import os
 
 router = APIRouter()
 
@@ -83,7 +82,7 @@ async def fetch_products(config: BurberryScraperConfig, limit: int) -> List[dict
         except json.JSONDecodeError as e:
             raise HTTPException(status_code=500, detail=f"Error parsing response: {str(e)}")
 
-@router.post("/scrape/burberry")
+@router.post("/scrape/burberry",description= "Scrape products from Burberry website \n The Burberry consists of the many products it wont have the based on the catebories , so you can get the products based on the different category upto 1000 products as a limit")
 async def scrape_burberry(
     limit: int = Query(..., ge=1, le=1000, description="Number of products to fetch (max 1000)")
 ):

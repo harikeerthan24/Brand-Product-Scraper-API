@@ -117,10 +117,10 @@ async def fetch_products(config: UniqloConfig, gender: str, limit: int) -> Dict[
             detail=f"Unexpected error: {str(e)}"
         )
 
-@router.get("/scrape/uniqlo", response_model=Dict[str, Any])
+@router.get("/scrape/uniqlo", description= "Get product recommendations from Uniqlo for specified gender categories. ", response_model=Dict[str, Any])
 async def scrape_uniqlo(
     genders: List[UniqloGender] = Query(..., description="Gender categories to fetch (comma-separated)"),
-    page_limit: Optional[int] = Query(1000, ge=1, le=1000, description="Number of products to return (max 500)")
+    page_limit: Optional[int] = Query(500, ge=1, le=500, description="Number of products to return (max 500)")
 ):
     """
     Get product recommendations from Uniqlo for specified gender categories.
