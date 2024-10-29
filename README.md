@@ -11,7 +11,6 @@ A comprehensive API for scraping product information from major fashion brands. 
 - Zara (Coming Soon)
 
 
-```markdown
 ## Project File Structure
 
 The following is the file structure for the Brand Product Scraper API project:
