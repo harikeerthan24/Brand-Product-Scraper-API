@@ -207,11 +207,5 @@ Common error codes across all endpoints:
 - Uniqlo limited to 500 products per gender category
 - Kate Spade limited to 5 pages per category
 
-## Best Practices
-1. Start with smaller limits for testing
-2. Use appropriate categories for each brand
-3. Handle rate limits and pagination appropriately
-4. Implement error handling in your client code
-
 ## Note
 The Zara scraper is currently under development and not available for use.
