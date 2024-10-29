@@ -1,114 +1,186 @@
-# Brand Product Scraper API
+# Brand Product Scraper API Documentation
 
-An API for scraping product information from various brands, including details, images, and videos.
+## Overview
+A comprehensive API for scraping product information from major fashion brands. Get detailed product data including prices, images, colors, and availability.
 
 ## Supported Brands
-
 - H&M
-- Burberry 
+- Burberry
 - Kate Spade
 - Uniqlo
+- Zara (Coming Soon)
 
-## Project Structure
+## Getting Started
 
-```
-brand_products_scraper/
-└── api/
-    ├── main.py               # The entry point of the FastAPI application, initializing the app and routing
-    ├── models.py             # Contains data models for API requests and responses using Pydantic
-    ├── __init__.py           # Marks the api directory as a Python package for module imports
-    └── endpoints/
-        ├── burberry_scraper_api.py  # API endpoints for scraping product info from Burberry
-        ├── hm_scraper_api.py        # API endpoints for scraping product info from H&M
-        ├── kate_spade_api.py        # API endpoints for scraping product info from Kate Spade
-        ├── uniqlo_scraper_api.py    # API endpoints for scraping product info from Uniqlo
-        ├── zara_scraper_api.py      # API endpoints for scraping product info from Zara
-        └── __init__.py              # Marks the endpoints directory as a Python package for imports
-```
+### Installation
 
-### Note 
+1. **Set Up Virtual Environment**
 
-Currently zara scraper api is in development so it wont work.
-
-## Setting Up a Virtual Environment
-
-To manage dependencies effectively, it's recommended to set up a virtual environment using either `venv` (built-in with Python) or `conda` (via Anaconda or Miniconda).
-
-### Option 1: Using `venv`
-
-1. **Create a Virtual Environment**
+   Using venv:
    ```bash
    python -m venv venv
-   ```
-   This creates a virtual environment named `venv` in your project directory.
-
-2. **Activate the Virtual Environment**
-   - **On Windows:**
-     ```bash
-     venv\Scripts\activate
-     ```
-   - **On macOS/Linux:**
-     ```bash
-     source venv/bin/activate
-     ```
-
-3. **Deactivate the Environment** (when you're done working)
-   ```bash
-   deactivate
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # macOS/Linux
+   source venv/bin/activate
    ```
 
-### Option 2: Using `conda`
-
-1. **Create a Conda Environment**
+   OR using conda:
    ```bash
    conda create -n myenv python=3.8
-   ```
-   Replace `myenv` with your preferred environment name and `python=3.8` with the Python version you need.
-
-2. **Activate the Conda Environment**
-   ```bash
    conda activate myenv
    ```
 
-3. **Deactivate the Environment**
+2. **Install Dependencies**
    ```bash
-   conda deactivate
+   pip install -r requirements.txt
    ```
 
-## Installing Dependencies from `requirements.txt`
-
-After setting up and activating your environment, install dependencies by running:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Setup and Execution
-
-Follow these steps to run the `main.py` file for your FastAPI project, access the endpoints, and utilize the interactive API documentation.
-
-1. **Navigate to Your API Project Directory**
-   Open your terminal and change to the directory containing your FastAPI project files:
+3. **Start the Server**
    ```bash
    cd api/
-   ```
-
-2. **Run the `main.py` File**
-   ```bash
    python main.py
    ```
-   This will start the FastAPI server and output the following:
-   ```
-   INFO:     Started server process [9952]
-   INFO:     Waiting for application startup.
-   INFO:     Application startup complete.
-   INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-   ```
 
-3. **Access the API**
-   - In your browser, go to `http://127.0.0.1:8000` to see the running server.
-   - To access the Swagger UI documentation, go to `http://127.0.0.1:8000/docs`.
+   Server will run at: `http://127.0.0.1:8000`
+   API Documentation: `http://127.0.0.1:8000/docs`
 
-   ![FastAPI Server Screenshot](./brand_products_scraper/images/FastAPI_Server.jpg)
 
-You can now interact with the API and test the available endpoints using the Swagger UI.
+Check out Product API :
+![Brands Product Scraper API](./brand_products_scraper/images/FastAPI_Server.png)
+
+
+## API Endpoints
+
+### 1. H&M Scraper (`POST /scrape/hm`)
+
+Scrape products from H&M's catalog.
+
+#### Parameters:
+- `main_categories`: List of categories (`men`, `women`)
+- `product_types`: List of types (`tshirts-tank-tops`, `shirts`, `jeans`, etc.)
+- `page_size`: Products per page (max: 72)
+- `max_pages`: Maximum pages to scrape
+- `limit`: Maximum products to return (max: 1000)
+
+#### Example Response:
+```json
+{
+  "message": "Scraped 50 products for H&M",
+  "products": [
+    {
+      "id": "12345",
+      "product_name": "Slim Fit Jeans",
+      "price": {"current_price": 29.99},
+      "colors": ["Blue", "Black"],
+      "images": ["image_url_1", "image_url_2"]
+    }
+  ]
+}
+```
+
+### 2. Burberry Scraper (`POST /scrape/burberry`)
+
+Scrape luxury products from Burberry.
+
+#### Parameters:
+- `limit`: Number of products (max: 1000)
+
+#### Example Response:
+```json
+{
+  "message": "Successfully scraped products from Burberry",
+  "products": [
+    {
+      "id": "B12345",
+      "title": "Check Cotton Shirt",
+      "price": "$990",
+      "alternatives": [
+        {
+          "label": "Archive Beige",
+          "image": "image_url"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 3. Kate Spade Scraper (`POST /scrape/katespade`)
+
+Scrape products from Kate Spade's collection.
+
+#### Parameters:
+- `categories`: List of categories (`new`, `handbags`, `wallets`, etc.)
+- `pages`: Pages to scrape per category (max: 5)
+
+#### Example Response:
+```json
+{
+  "message": "Scraping completed",
+  "products": [
+    {
+      "name": "Spade Flower Jacquard Tote",
+      "price": {
+        "current_price": 298.00,
+        "currency": "USD"
+      },
+      "color_variants": [
+        {
+          "color_name": "Blue",
+          "images": ["image_url_1", "image_url_2"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 4. Uniqlo Scraper (`GET /scrape/uniqlo`)
+
+Fetch product recommendations from Uniqlo.
+
+#### Parameters:
+- `genders`: List of categories (`men`, `women`)
+- `page_limit`: Products per category (max: 500)
+
+#### Example Response:
+```json
+{
+  "message": "Data fetched successfully",
+  "data": {
+    "men": [
+      {
+        "name": "Product Name",
+        "base_price": 29.99,
+        "sizes": ["S", "M", "L"],
+        "rating": 4.5
+      }
+    ]
+  }
+}
+```
+
+## Error Handling
+
+Common error codes across all endpoints:
+- `400`: Bad Request (Invalid parameters)
+- `404`: Not Found (No products found)
+- `500`: Internal Server Error
+- `503`: Service Unavailable
+
+## Rate Limiting
+- Maximum 1000 products per request for most endpoints
+- Uniqlo limited to 500 products per gender category
+- Kate Spade limited to 5 pages per category
+
+## Best Practices
+1. Start with smaller limits for testing
+2. Use appropriate categories for each brand
+3. Handle rate limits and pagination appropriately
+4. Implement error handling in your client code
+
+## Note
+The Zara scraper is currently under development and not available for use.
