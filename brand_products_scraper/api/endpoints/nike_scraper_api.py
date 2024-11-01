@@ -1,80 +1,30 @@
-import requests
-from bs4 import BeautifulSoup
+
 import json
+import asyncio  
+from fastapi import APIRouter, HTTPException
+import httpx
+from bs4 import BeautifulSoup
+from pydantic import BaseModel
+from typing import List, Dict
 
-# Function to fetch and parse the product page
-def fetch_product_data(url):
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an error for bad responses
+router = APIRouter()
 
-    # Use BeautifulSoup to parse the HTML
-    soup = BeautifulSoup(response.text, 'lxml')
+class Product(BaseModel):
+    id: str
+    product_name: str
+    subtitle: str
+    price: str
+    color: str
+    active_sizes: List[str]
+    inactive_sizes: List[str]
+    images: List[str]
+    product_url: str
 
-    # Extract the JSON data from the <script> tag
-    script = soup.find('script', id='__NEXT_DATA__')
-    data = json.loads(script.string)
+class ProductResponse(BaseModel):
+    products: List[Product]
+    total_products: int
 
-    page_props = data.get('props', {}).get('pageProps', {})
-    products = page_props.get('selectedProduct', {})
-
-    id = products.get('id', '')
-
-    # Lists to hold active and inactive sizes
-    active_sizes = []
-    inactive_sizes = []
-
-    # Extract sizes
-    sizes = products.get('sizes', [])
-    for size in sizes:
-        status = size.get('status', '')
-        label = size.get('localizedLabel', '')
-        if status == 'ACTIVE':
-            active_sizes.append(label)
-        else:
-            inactive_sizes.append(label)
-
-    # Extract other product details
-    color = products.get('colorDescription', '')
-    price = products.get('prices', {}).get('currentPrice', 0)
-    price = f"${price:.2f}"
-
-    product_info = products.get('productInfo', {})
-    title = product_info.get('title', '')
-    subtitle = product_info.get('subtitle', '')
-    product_description = product_info.get('productDescription', '')
-    benefits = product_info.get('enhancedBenefits', [])
-    product_url = product_info.get('url', '')
-
-    # Extract media (images and videos)
-    media = products.get('contentImages', [])
-    images = []
-    videos = []
-
-    for item in media:
-        if item["cardType"] == "image":
-            images.append(item["properties"]["squarish"]["url"])
-        elif item["cardType"] == "video":
-            videos.append(item["properties"]["videoURL"])
-
-    # Prepare the final output structure
-    output_data = {
-        "id": id,
-        "product_name": title,
-        "subtitle": subtitle,
-        "product_description": product_description,
-        "price": price,
-        "product_url": product_url,
-        "color": color,
-        "active_sizes": active_sizes,
-        "inactive_sizes": inactive_sizes,
-        "benefits": benefits,
-        "images": images,
-        "videos": videos,
-    }
-
-    return output_data
-
-# Example usage with multiple URLs
+# List of Nike product URLs to scrape
 urls = [
     'https://www.nike.com/t/tatum-3-zero-days-off-basketball-shoes-vn4gkx/FZ6598-002',
     'https://www.nike.com/t/kd17-basketball-shoes-t6HTr6/FJ9487-002',
@@ -150,18 +100,77 @@ urls = [
 
 ]
 
-# Loop through each URL and fetch data
-all_product_data = []
-for url in urls:
-    try:
-        product_data = fetch_product_data(url)
-        all_product_data.append(product_data)
-    except Exception as e:
-        print(f"Error fetching data from {url}: {e}")
 
-# Save the data to a JSON file
-with open('nike_products.json', 'w', encoding='utf-8') as file:
-    json.dump(all_product_data, file, ensure_ascii=False, indent=4)
+async def fetch_product_data(url: str, retries: int = 3) -> Dict:
+    """
+    Fetch and parse product data from a single Nike product page.
+    Retries up to `retries` times on failure.
+    """
+    async with httpx.AsyncClient() as client:
+        for attempt in range(retries): # adding the retry functionality 
+            try:
+                response = await client.get(url, timeout=30)
+                response.raise_for_status()
 
-print(f"Data saved for {len(all_product_data)} products.")
+                # Parse HTML using BeautifulSoup
+                soup = BeautifulSoup(response.text, 'lxml')
+                script = soup.find('script', id='__NEXT_DATA__')
+                data = json.loads(script.string)
 
+                # Extract product data
+                page_props = data.get('props', {}).get('pageProps', {})
+                products = page_props.get('selectedProduct', {})
+
+                return {
+                    "id": products.get('id', ''),
+                    "product_name": products.get('productInfo', {}).get('title', ''),
+                    "subtitle": products.get('productInfo', {}).get('subtitle', ''),
+                    "price": f"${products.get('prices', {}).get('currentPrice', 0):.2f}",
+                    "color": products.get('colorDescription', ''),
+                    "active_sizes": [
+                        size.get('localizedLabel', '')
+                        for size in products.get('sizes', [])
+                        if size.get('status', '') == 'ACTIVE'
+                    ],
+                    "inactive_sizes": [
+                        size.get('localizedLabel', '')
+                        for size in products.get('sizes', [])
+                        if size.get('status', '') != 'ACTIVE'
+                    ],
+                    "images": [
+                        item["properties"]["squarish"]["url"]
+                        for item in products.get('contentImages', [])
+                        if item["cardType"] == "image"
+                    ],
+                    "product_url": url
+                }
+
+            except Exception as e:
+                # Log the error and retry if attempts remain
+                print(f"Attempt {attempt + 1} failed for URL {url}: {e}")
+                await asyncio.sleep(2)  # Wait before retrying
+
+        # Return error information if all attempts fail
+        return {"url": url, "error": f"Failed after {retries} attempts"}
+
+@router.get("/scrape/nike", response_model=ProductResponse)
+async def scrape_nike():
+    """
+    Scrape Nike products from a predefined list of URLs.
+    """
+    # Fetch product data concurrently from all URLs in NIKE_URLS
+    tasks = [fetch_product_data(url) for url in urls]
+    results = await asyncio.gather(*tasks)
+
+    # Separate successful and failed results
+    products = [result for result in results if 'error' not in result]
+    failed_products = [result for result in results if 'error' in result]
+
+    if failed_products:
+        failed_urls = [failed['url'] for failed in failed_products]
+        print(f"Failed to scrape the following URLs: {failed_urls}")
+
+    return {
+        "total_products": len(products),
+        "products": products,
+    }
